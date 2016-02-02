@@ -1,0 +1,64 @@
+/*BODY STUFFS*/
+body {
+  text-align: center;
+  font-family: "Press Start 2P", Arial, Serif;
+}
+body > h1 {
+  margin-top: -5px;
+  margin-bottom: -3px;
+}
+
+/*BOARD*/
+.game {
+  background-color: #3b3b62;
+  margin: 0 auto;
+  display: inline-block;
+  height: 602px;
+  width: 602px;
+}
+
+#canvas {
+  visibility: 0;
+  border: 2px solid gray;
+}
+
+.notification {
+  display: none;
+  background-color: black;
+  color: red;
+  height: 600px;
+  width: 600px;
+}
+
+/*BUTTONS*/
+button {
+  font-family: "Press Start 2P", Arial, Serif;
+  margin: 5px;
+  height: 45px;
+  width: 300px;
+}
+
+.buttons {
+  float: left;
+  width: 450px;
+}
+
+.resume {
+  display: none;
+}
+
+.reset {
+  display: none;
+}
+
+.playAgain {
+  display: none;
+}
+
+.settings {
+  display: inline-block;
+}
+
+.home {
+  display: none;
+}

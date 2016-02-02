@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SNAKE</title>
+  <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="buttons">
+        <button class="playAgain"> PLAY AGAIN!</button>
+        <button class="home">HOME</button>
+        <button class="reset">RESET</button>
+        <button class="start">START</button>
+        <button class="pause">PAUSE</button>
+        <button class="resume">RESUME</button>
+        <h1 id="high-score">HIGHEST SCORE: </h1>
+    </div>
+    <h1>SNAKE</h1>
+    <div class="game">
+      <canvas id="canvas" width="600" height="600">
+        YOUR BROWSER DOESN'T SUPPORT CANVAS YET
+      </canvas>
+      <h1 class="currentScore">Your score: </h1>
+    </div>
+    <div class="notification">
+      <h1>YOU DIED!</h1>
+      <h3 class="score">TOTAL SCORE: </h3>
+    </div>
+<script src="js/script.js"></script>
+</body>
+</html>
