@@ -1,4 +1,4 @@
-$(document).ready(function() {
+// $(document).ready(function() {
   // CANVAS PART
   var canvas = $("#canvas")[0];
   var canvasContext = canvas.getContext("2d");
@@ -12,12 +12,8 @@ $(document).ready(function() {
   var food;
   var snake;
   var score;
-  var highscore = parseInt(localStorage.getItem("topScore"));
-  if (!highscore) {
-    localStorage.setItem("topScore", "0");
-    highscore = 0;
-  }
   var speed;
+  var highscore = 0;
   var headColor = "green",
       colorFood = "yellow",
       bodyColor = "white",
@@ -107,7 +103,6 @@ $(document).ready(function() {
       y: Math.round(Math.random()*(canvasHeight-snakeWidth)/snakeWidth),
     }
   }
-
   function render(){
     canvasContext.fillStyle = canvasFill;
     canvasContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -149,11 +144,17 @@ $(document).ready(function() {
       die.pause();
       die.play();
     }
-
+    var storedHighscore = 0;
+    localStorage.setItem("highscore", highscore);
     $(".currentScore").text("Your score: " + score);
     if(score > highscore) {
-      highscore = score;
-      localStorage.setItem('topScore', score.toString());
+      highscore ++;
+      if (score > storedHighscore && localStorage.highscore !== undefined) {
+        localStorage.highscore = storedHighscore;
+      } else if(score > storedHighscore && localStorage.highscore === undefined){
+        storedHighscore++;
+        localStorage.highscore = storedHighscore;
+      }
     }
     $("#highScore").text(highscore);
 
@@ -220,4 +221,4 @@ $(document).ready(function() {
       direction = "down";
     }
   });
-});
+// });
