@@ -1,4 +1,4 @@
-// $(document).ready(function() {
+$(document).ready(function() {
   // CANVAS PART
   var canvas = $("#canvas")[0];
   var canvasContext = canvas.getContext("2d");
@@ -12,7 +12,11 @@
   var food;
   var snake;
   var score;
-  var highscore = 0 || localStorage.topScore;
+  var highscore = parseInt(localStorage.getItem("topScore"));
+  if (!highscore) {
+    localStorage.setItem("topScore", "0");
+    highscore = 0;
+  }
   var speed;
   var headColor = "green",
       colorFood = "yellow",
@@ -88,6 +92,7 @@
     location.reload(true);
   });
 
+
   function snakeMake(){
     var length = 10;
     snake = [];
@@ -145,12 +150,12 @@
       die.play();
     }
 
-    storage = localStorage.setItem('topScore', highscore);
     $(".currentScore").text("Your score: " + score);
-    $("#highScore").text(localStorage.topScore);
-    if(score > localStorage.getItem('topScore')){
-      highscore ++;
+    if(score > highscore) {
+      highscore = score;
+      localStorage.setItem('topScore', score.toString());
     }
+    $("#highScore").text(highscore);
 
     if(newX === food.x && newY === food.y){
       tail = {x: newX, y: newY};
@@ -215,4 +220,4 @@
       direction = "down";
     }
   });
-// });
+});
