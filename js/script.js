@@ -1,4 +1,4 @@
-// $(document).ready(function() {
+$(document).ready(function() {
   // CANVAS PART
   var canvas = $("#canvas")[0];
   var canvasContext = canvas.getContext("2d");
@@ -13,7 +13,7 @@
   var snake;
   var score;
   var speed;
-  var highscore = 0;
+  var highscore = localStorage.getItem("highscore") || 0;
   var headColor = "green",
       colorFood = "yellow",
       bodyColor = "white",
@@ -144,17 +144,11 @@
       die.pause();
       die.play();
     }
-    var storedHighscore = 0;
-    localStorage.setItem("highscore", highscore);
+
     $(".currentScore").text("Your score: " + score);
     if(score > highscore) {
-      highscore ++;
-      if (score > storedHighscore && localStorage.highscore !== undefined) {
-        localStorage.highscore = storedHighscore;
-      } else if(score > storedHighscore && localStorage.highscore === undefined){
-        storedHighscore++;
-        localStorage.highscore = storedHighscore;
-      }
+      highscore = parseInt(score);
+      localStorage.setItem("highscore", highscore);
     }
     $("#highScore").text(highscore);
 
@@ -221,4 +215,4 @@
       direction = "down";
     }
   });
-// });
+});
