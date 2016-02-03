@@ -12,13 +12,15 @@
   var food;
   var snake;
   var score;
-  var highscore = 0;
+  var highscore = localStorage.topScore;
   var speed;
   var headColor = "green",
       colorFood = "yellow",
       bodyColor = "white",
       canvasFill = "black";
-  var storage;
+  var run = $("#run")[0];
+  var die = $("#die")[0];
+  var eat = $("#eat")[0];
 
   function startGame(){
     score = 0;
@@ -29,7 +31,9 @@
     if(typeof loop_game !== "undefined")
       clearInterval(loop_game);
       loop_game = setInterval(render, speed);
-  }
+    run.play();
+  };
+
 
   // BUTTON FUNCTIONS
   $(".start").on("click", function(event) {
@@ -37,6 +41,7 @@
     $("#canvas").css("visibility", "100");
     $(".start").css("display", "none");
     $(".reset").css("display", "inline-block");
+    $(".pause").css("display", "inline-block");
   });
 
   $(".reset").on("click", function(event) {
@@ -76,12 +81,12 @@
     $(".pause").css("display", "inline-block");
     $(".reset").css("display", "inline-block");
     $(".playAgain").css("display", "none");
+    $(".home").css("display", "none");
   });
 
   $(".home").on('click', function(event) {
     location.reload(true);
   });
-
 
   function snakeMake(){
     var length = 10;
@@ -135,14 +140,22 @@
       $(".playAgain").css("display", "inline-block");
       $(".home").css("display", "inline-block");
       $(".score").text("TOTAL SCORE: " + score);
-      return;
+      run.pause();
+      die.pause();
+      die.play();
     }
 
+    storage = localStorage.setItem('topScore', highscore);
     $(".currentScore").text("Your score: " + score);
+    $("#highScore").text(localStorage.topScore);
+    if(score > localStorage.getItem('topScore')){
+      highscore ++;
+    }
 
     if(newX === food.x && newY === food.y){
       tail = {x: newX, y: newY};
       score ++;
+      eat.play();
       randomGoods();
     } else {
       tail = snake.pop();
