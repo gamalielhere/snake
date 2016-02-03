@@ -5,7 +5,6 @@ $(document).ready(function() {
   var canvasWidth = $("#canvas").width();
   var canvasHeight = $("#canvas").height();
 
-
   // CREATING THE SNAKE
   var snakeWidth = 15;
   var direction;
@@ -13,7 +12,12 @@ $(document).ready(function() {
   var snake;
   var score;
   var speed;
-  var highscore = localStorage.getItem("highscore") || 0;
+  var highscore;
+  var newHS = new Firebase("https://blinding-torch-4399.firebaseio.com/");
+  newHS.child("highscore").on("value", function(snap){
+     highscore = snap.val();
+     $("#highScore").text(highscore);
+  });
   var headColor = "green",
       colorFood = "yellow",
       bodyColor = "white",
@@ -148,7 +152,7 @@ $(document).ready(function() {
     $(".currentScore").text("Your score: " + score);
     if(score > highscore) {
       highscore = parseInt(score);
-      localStorage.setItem("highscore", highscore);
+      newHS.child('highscore').set(highscore);
     }
     $("#highScore").text(highscore);
 
