@@ -147,29 +147,19 @@ $(document).ready(function() {
       die.pause();
       die.play();
     }
-<<<<<<< HEAD
-
-    storage = localStorage.setItem('topScore', highscore);
-    $(".currentScore").text("Your score: " + score);
-    $("#highScore").text(localStorage.topScore);
-    if(score > localStorage.getItem('topScore')){
-      highscore ++;
-    }
-=======
     var storedHighscore = 0;
-    localStorage.setItem("highscore", highscore);
-    $(".currentScore").text("Your score: " + score);
-    if(score > highscore) {
-      highscore ++;
-      if (score > storedHighscore && localStorage.highscore !== undefined) {
-        localStorage.highscore = storedHighscore;
-      } else if(score > storedHighscore && localStorage.highscore === undefined){
-        storedHighscore++;
-        localStorage.highscore = storedHighscore;
-      }
-    }
-    $("#highScore").text(highscore);
->>>>>>> master
+        localStorage.setItem("highscore", highscore);
+        $(".currentScore").text("Your score: " + score);
+        if(score > highscore) {
+          highscore ++;
+          if (score > storedHighscore && localStorage.highscore !== undefined) {
+            localStorage.highscore = storedHighscore;
+          } else if(score > storedHighscore && localStorage.highscore === undefined){
+            storedHighscore++;
+            localStorage.highscore = storedHighscore;
+          }
+        }
+        $("#highScore").text(highscore);
 
     if(newX === food.x && newY === food.y){
       tail = {x: newX, y: newY};
