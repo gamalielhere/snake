@@ -1,4 +1,4 @@
-$(document).ready(function() {
+// $(document).ready(function() {
   // CANVAS PART
   var canvas = $("#canvas")[0];
   var canvasContext = canvas.getContext("2d");
@@ -88,6 +88,7 @@ $(document).ready(function() {
     location.reload(true);
   });
 
+
   function snakeMake(){
     var length = 10;
     snake = [];
@@ -144,18 +145,18 @@ $(document).ready(function() {
       die.play();
     }
     var storedHighscore = 0;
-        localStorage.setItem("highscore", highscore);
-        $(".currentScore").text("Your score: " + score);
-        if(score > highscore) {
-          highscore ++;
-          if (score > storedHighscore && localStorage.highscore !== undefined) {
-            localStorage.highscore = storedHighscore;
-          } else if(score > storedHighscore && localStorage.highscore === undefined){
-            storedHighscore++;
-            localStorage.highscore = storedHighscore;
-          }
-        }
-        $("#highScore").text(highscore);
+    localStorage.setItem("highscore", highscore);
+    $(".currentScore").text("Your score: " + score);
+    if(score > highscore) {
+      highscore ++;
+      if (score > storedHighscore && localStorage.highscore !== undefined) {
+        localStorage.highscore = storedHighscore;
+      } else if(score > storedHighscore && localStorage.highscore === undefined){
+        storedHighscore++;
+        localStorage.highscore = storedHighscore;
+      }
+    }
+    $("#highScore").text(highscore);
 
     if(newX === food.x && newY === food.y){
       tail = {x: newX, y: newY};
@@ -220,4 +221,4 @@ $(document).ready(function() {
       direction = "down";
     }
   });
-});
+// });
