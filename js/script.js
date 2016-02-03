@@ -18,6 +18,7 @@
       colorFood = "yellow",
       bodyColor = "white",
       canvasFill = "black";
+  var storage;
 
   function startGame(){
     score = 0;
