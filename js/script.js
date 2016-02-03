@@ -12,8 +12,12 @@ $(document).ready(function() {
   var food;
   var snake;
   var score;
+<<<<<<< HEAD
   var highscore = localStorage.topScore;
+=======
+>>>>>>> master
   var speed;
+  var highscore = 0;
   var headColor = "green",
       colorFood = "yellow",
       bodyColor = "white",
@@ -102,7 +106,6 @@ $(document).ready(function() {
       y: Math.round(Math.random()*(canvasHeight-snakeWidth)/snakeWidth),
     }
   }
-
   function render(){
     canvasContext.fillStyle = canvasFill;
     canvasContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -144,6 +147,7 @@ $(document).ready(function() {
       die.pause();
       die.play();
     }
+<<<<<<< HEAD
 
     storage = localStorage.setItem('topScore', highscore);
     $(".currentScore").text("Your score: " + score);
@@ -151,6 +155,21 @@ $(document).ready(function() {
     if(score > localStorage.getItem('topScore')){
       highscore ++;
     }
+=======
+    var storedHighscore = 0;
+    localStorage.setItem("highscore", highscore);
+    $(".currentScore").text("Your score: " + score);
+    if(score > highscore) {
+      highscore ++;
+      if (score > storedHighscore && localStorage.highscore !== undefined) {
+        localStorage.highscore = storedHighscore;
+      } else if(score > storedHighscore && localStorage.highscore === undefined){
+        storedHighscore++;
+        localStorage.highscore = storedHighscore;
+      }
+    }
+    $("#highScore").text(highscore);
+>>>>>>> master
 
     if(newX === food.x && newY === food.y){
       tail = {x: newX, y: newY};
