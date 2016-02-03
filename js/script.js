@@ -12,7 +12,7 @@
   var food;
   var snake;
   var score;
-  var highscore = localStorage.topScore;
+  var highscore = localStorage.topScore || 0;
   var speed;
   var headColor = "green",
       colorFood = "yellow",
