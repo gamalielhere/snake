@@ -12,10 +12,6 @@ $(document).ready(function() {
   var food;
   var snake;
   var score;
-<<<<<<< HEAD
-  var highscore = localStorage.topScore;
-=======
->>>>>>> master
   var speed;
   var highscore = 0;
   var headColor = "green",
