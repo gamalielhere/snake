@@ -217,6 +217,8 @@ $(document).ready(function() {
       direction = "right";
     } else if(arrow === 40 && direction !== "up"){
       direction = "down";
+    } else if(arrow === 32){
+      startGame();
     }
   });
 });
