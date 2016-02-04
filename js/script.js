@@ -107,6 +107,9 @@ $(document).ready(function() {
       y: Math.round(Math.random()*(canvasHeight-snakeWidth)/snakeWidth),
     }
   }
+
+  var cWsW = Math.floor(canvasWidth/snakeWidth);
+  var cHsW = Math.floor(canvasHeight/snakeWidth);
   function render(){
     canvasContext.fillStyle = canvasFill;
     canvasContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -134,7 +137,7 @@ $(document).ready(function() {
         newY ++;
     }
     // GAME OVER CONDITION
-    if(newX === -1 || newX === canvasWidth/snakeWidth || newY === -1 || newY === canvasHeight/snakeWidth || collide(newX,newY,snake)){
+    if(newX === -1 || newX === cWsW || newY === -1 || newY === cHsW || collide(newX,newY,snake)){
       $(".game").css("display", "none");
       $(".notification").css("display", "inline-block");
       $(".start").css("display", "none");
@@ -200,14 +203,15 @@ $(document).ready(function() {
 
   function collide(x, y, array){
     for (var i = 0; i < array.length; i++) {
-      if (x === array[i].x && y === array[i].y)
+      if (x === array[i].x && y === array[i].y){
+        console.log("should die");
         return true;
+      }
     }
     return false;
   }
 
-
-  $(document).keydown(function(event) {
+  $(document).on('keyup',function(event) {
     var arrow = event.which; // return which key was pressed
     if(arrow === 37 && direction !== "right"){
       direction = "left";
@@ -217,8 +221,6 @@ $(document).ready(function() {
       direction = "right";
     } else if(arrow === 40 && direction !== "up"){
       direction = "down";
-    } else if(arrow === 32){
-      startGame();
     }
   });
 });
