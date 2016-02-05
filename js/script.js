@@ -121,7 +121,7 @@ $(document).ready(function() {
     speed = Math.max(15, 70 - (score * 2));
     loop_game = setInterval(render, speed);
 
-    // Making the snake move.
+    // Setting the snake's head
     var newX = snake[0].x;
     var newY = snake[0].y;
     var tail;
@@ -211,7 +211,9 @@ $(document).ready(function() {
     return false;
   }
 
-  $(document).keyup(function(event) {
+
+
+  $(document).keydown(function(event) {
     var arrow = event.which; // return which key was pressed
     if(arrow === 37 && direction !== "right"){
       direction = "left";
