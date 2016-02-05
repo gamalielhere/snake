@@ -108,8 +108,8 @@ $(document).ready(function() {
     }
   }
 
-  var cWsW = Math.floor(canvasWidth/snakeWidth);
-  var cHsW = Math.floor(canvasHeight/snakeWidth);
+  var cWsW = Math.ceil(canvasWidth/snakeWidth);
+  var cHsW = Math.ceil(canvasHeight/snakeWidth);
   function render(){
     canvasContext.fillStyle = canvasFill;
     canvasContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -211,7 +211,7 @@ $(document).ready(function() {
     return false;
   }
 
-  $(document).on('keyup',function(event) {
+  $(document).keyup(function(event) {
     var arrow = event.which; // return which key was pressed
     if(arrow === 37 && direction !== "right"){
       direction = "left";
