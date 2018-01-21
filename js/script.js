@@ -1,8 +1,14 @@
 (function() {
   // Create canvas
   const canvas = document.getElementById("canvas");
-  canvas.width = window.innerWidth - 30;
-  canvas.height = window.innerHeight / 2.5;
+  if(window.outerWidth > 960) {
+    canvas.width = Math.round(window.outerWidth / 3);
+    canvas.height = Math.round(window.outerWidth / 3);
+  } else {
+    canvas.width = Math.round(window.outerWidth / 1.15);
+    canvas.height = Math.round(window.outerWidth / 1.15);
+  }
+
 
   const canvasContext = canvas.getContext("2d"),
     canvasWidth = canvas.width,
