@@ -1,6 +1,9 @@
 (function() {
   // Create canvas
   const canvas = document.getElementById("canvas");
+  canvas.width = window.innerWidth - 30;
+  canvas.height = window.innerHeight / 2.5;
+
   const canvasContext = canvas.getContext("2d"),
     canvasWidth = canvas.width,
     canvasHeight = canvas.height;
@@ -28,7 +31,7 @@
   // Various variables
   const displayScore = document.getElementById("highScore"),
     gameContainer = document.getElementsByClassName("game"),
-    notifiactionContainer = document.getElementsByClassName("notification"),
+    notificationContainer = document.getElementsByClassName("notification"),
     userScoreContainer = document.getElementsByClassName("currentScore");
   const cWsW = Math.ceil(canvasWidth / snakeWidth),
     cHsW = Math.ceil(canvasHeight / snakeWidth);
@@ -41,6 +44,9 @@
   let score;
   let speed;
 
+  gameContainer[0].style.height = `${canvas.height}px`;
+  gameContainer[0].style.width = `${canvas.width}px`;
+
   // Get firebase score and display it
   const firebaseHighScore = new Firebase(
     "https://blinding-torch-4399.firebaseio.com/"
@@ -49,7 +55,7 @@
   firebaseHighScore.child("highscore").on("value", fbScore => {
     localHighScore = fbScore.val();
     displayScore.innerHTML = localHighScore;
-    userScoreContainer[0].innerHTML = "Your score: 0";
+    userScoreContainer[0].innerHTML = "Score: 0";
   });
 
   function generateRandomDirection() {
@@ -143,7 +149,9 @@
       collide(newX, newY, snake)
     ) {
       gameContainer[0].style.display = "none";
-      notifiactionContainer[0].style.display = "inline-block";
+      notificationContainer[0].style.display = "inline-block";
+      notificationContainer[0].style.height = `${canvas.height}px`;
+      notificationContainer[0].style.width = `${canvas.width}px`;
       startButton[0].style.display = "none";
       resumeButton[0].style.display = "none";
       pauseButton[0].style.display = "none";
@@ -159,7 +167,7 @@
   }
 
   function updateScore() {
-    userScoreContainer[0].innerHTML = `Your score: ${score}`;
+    userScoreContainer[0].innerHTML = `Score: ${score}`;
     if (score > localHighScore) {
       localHighScore = parseInt(score);
       firebaseHighScore.child("highscore").set(localHighScore);
@@ -297,7 +305,7 @@
     startTheGame();
     canvas.style.visibility = "visible";
     gameContainer[0].style.display = "inline-block";
-    notifiactionContainer[0].style.display = "none";
+    notificationContainer[0].style.display = "none";
     startButton[0].style.display = "none";
     resumeButton[0].style.display = "none";
     pauseButton[0].style.display = "inline-block";

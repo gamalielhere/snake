@@ -6,13 +6,15 @@
       <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
       <link rel="stylesheet" href="css/style.css">
       <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css"/>
+      <meta name="viewport" content="width=device-width" />
       <script src="https://cdn.firebase.com/js/client/2.4.0/firebase.js"></script>
     </head>
     <body>
       <div class="content">
         <h1>SNAKE</h1>
+        <h1><span class="currentScore"></span></h1>
         <div class="game">
-          <canvas id="canvas" width="650" height="650">
+          <canvas id="canvas">
             YOUR BROWSER DOESN'T SUPPORT CANVAS YET
           </canvas>
         </div>
@@ -21,26 +23,25 @@
           <h3 class="score"></h3>
         </div>
         <div class="buttons">
-          <h1><span class="currentScore"></span></h1>
           <button class="playAgain" onclick="playAgain();"> PLAY AGAIN!</button>
-          <button class="home" onclick="homeButton();">HOME</button>
-          <button class="reset" onclick="resetGame();">RESET</button>
           <button class="start" onclick="startGame();">START</button>
-          <button class="pause" onclick="pauseGame();">PAUSE</button>
-          <button class="resume" onclick="resumeGame();">RESUME</button>
           <div class="mobileButton">
             <div class="mobileButtonCenter">
-              <button> UP </button>
+              <button onclick="mobileUp();"> UP </button>
             </div>
             <div class="mobileButtonCenter left--right">
-              <button> LEFT </button>
-              <button> RIGHT </button>
+              <button onclick="mobileLeft();"> LEFT </button>
+              <button onclick="mobileRight();"> RIGHT </button>
             </div>
             <div class="mobileButtonCenter">
-              <button> DOWN </button>
+              <button onclick="mobileDown();"> DOWN </button>
             </div>
           </div>
-          <h1>HIGHEST SCORE: <span id="highScore"></span> </h1>
+          <button class="home" onclick="homeButton();">HOME</button>
+          <button class="reset" onclick="resetGame();">RESET</button>
+          <button class="pause" onclick="pauseGame();">PAUSE</button>
+          <button class="resume" onclick="resumeGame();">RESUME</button>
+          <h1>HIGHSCORE: <span id="highScore"></span> </h1>
         </div>
       </div>
       <audio src="assets/run.mp3" id="run" loop></audio>

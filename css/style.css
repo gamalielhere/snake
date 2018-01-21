@@ -12,9 +12,7 @@ body > h1 {
 .game {
   background-color: #3b3b62;
   display: inline-block;
-  height: 650px;
   margin: 0 auto;
-  width: 650px;
 }
 
 #canvas {
@@ -25,12 +23,12 @@ body > h1 {
   display: none;
   background-color: black;
   color: red;
-  height: 650px;
-  width: 650px;
 }
 
 /*BUTTONS*/
 button {
+  background-color: grey;
+  border: 1px solid black;
   font-family: "Press Start 2P", Arial, Serif;
   margin: 5px;
   height: 45px;
@@ -74,15 +72,19 @@ button {
 }
 
 .mobileButtonCenter button {
-  width: 70px;
+  width: 80px;
 }
 
 .left--right button  {
-  margin: 0 35px;
+  margin: 0 40px;
 }
 
 @media screen and (max-width: 960px) {
   .mobileButton {
     display: block;
+  }
+
+  .content {
+    margin-top: 25px;
   }
 }
