@@ -11,36 +11,32 @@ body > h1 {
 /*BOARD*/
 .game {
   background-color: #3b3b62;
-  margin: 0 auto;
   display: inline-block;
-  height: 602px;
-  width: 602px;
+  margin: 0 auto;
 }
 
 #canvas {
-  visibility: 0;
-  border: 2px solid gray;
+  visibility: hidden;
 }
 
 .notification {
   display: none;
   background-color: black;
   color: red;
-  height: 600px;
-  width: 600px;
 }
 
 /*BUTTONS*/
 button {
+  background-color: grey;
+  border: 1px solid black;
   font-family: "Press Start 2P", Arial, Serif;
   margin: 5px;
   height: 45px;
   width: 300px;
 }
 
-.buttons {
-  float: left;
-  width: 450px;
+.content {
+  margin-top: 64px;
 }
 
 .resume {
@@ -65,4 +61,30 @@ button {
 
 .pause {
   display: none;
+}
+
+.mobileButton {
+  display: none;
+}
+
+.mobileButtonCenter {
+  text-align: center;
+}
+
+.mobileButtonCenter button {
+  width: 80px;
+}
+
+.left--right button  {
+  margin: 0 40px;
+}
+
+@media screen and (max-width: 960px) {
+  .mobileButton {
+    display: block;
+  }
+
+  .content {
+    margin-top: 25px;
+  }
 }

@@ -1,228 +1,346 @@
-$(document).ready(function() {
-  // CANVAS PART
-  var canvas = $("#canvas")[0];
-  var canvasContext = canvas.getContext("2d");
-  var canvasWidth = $("#canvas").width();
-  var canvasHeight = $("#canvas").height();
+(function() {
+  // Create canvas
+  const canvas = document.getElementById("canvas");
+  canvas.width = window.innerWidth - 30;
+  canvas.height = window.innerHeight / 2.5;
 
-  // CREATING THE SNAKE
-  var snakeWidth = 15;
-  var direction;
-  var food;
-  var snake;
-  var score;
-  var speed;
-  var highscore;
-  var newHS = new Firebase("https://blinding-torch-4399.firebaseio.com/");
-  newHS.child("highscore").on("value", function(snap){
-     highscore = snap.val();
-     $("#highScore").text(highscore);
-  });
-  var headColor = "green",
-      colorFood = "yellow",
-      bodyColor = "white",
-      canvasFill = "black";
-  var run = $("#run")[0];
-  var die = $("#die")[0];
-  var eat = $("#eat")[0];
+  const canvasContext = canvas.getContext("2d"),
+    canvasWidth = canvas.width,
+    canvasHeight = canvas.height;
 
-  function startGame(){
-    score = 0;
-    speed = 70;
-    direction = "right";
-    snakeMake();
-    randomGoods();
-    if(typeof loop_game !== "undefined")
-      clearInterval(loop_game);
-      loop_game = setInterval(render, speed);
-    run.play();
-  };
+  // Colors
+  const snakeWidth = 15,
+    snakeHeadColor = "green",
+    foodColor = "yellow",
+    bodyColor = "white",
+    canvasFill = "black";
 
+  // Music Variables
+  const run = document.getElementById("run"),
+    die = document.getElementById("die"),
+    eat = document.getElementById("eat");
 
-  // BUTTON FUNCTIONS
-  $(".start").on("click", function(event) {
-    startGame();
-    $("#canvas").css("visibility", "100");
-    $(".start").css("display", "none");
-    $(".reset").css("display", "inline-block");
-    $(".pause").css("display", "inline-block");
-  });
+  // Button Variables
+  const startButton = document.getElementsByClassName("start"),
+    resetButton = document.getElementsByClassName("reset"),
+    resumeButton = document.getElementsByClassName("resume"),
+    pauseButton = document.getElementsByClassName("pause"),
+    homeButton = document.getElementsByClassName("home"),
+    playAgainButton = document.getElementsByClassName("playAgain");
 
-  $(".reset").on("click", function(event) {
-    startGame();
-    $(".start").css("display", "none");
-    $(".resume").css("display", "none");
-    $(".pause").css("display", "inline-block");
-    $(".reset").css("display", "inline-block");
+  // Various variables
+  const displayScore = document.getElementById("highScore"),
+    gameContainer = document.getElementsByClassName("game"),
+    notificationContainer = document.getElementsByClassName("notification"),
+    userScoreContainer = document.getElementsByClassName("currentScore");
+  const cWsW = Math.ceil(canvasWidth / snakeWidth),
+    cHsW = Math.ceil(canvasHeight / snakeWidth);
+  let direction;
+  let food;
+  let bonusFood;
+  let localHighScore;
+  let loopGame;
+  let snake;
+  let score;
+  let speed;
 
-  });
+  gameContainer[0].style.height = `${canvas.height}px`;
+  gameContainer[0].style.width = `${canvas.width}px`;
 
-  $(".resume").on("click", function(event) {
-    $(".start").css("display", "none");
-    $(".pause").css("display", "inline-block");
-    $(".resume").css("display", "none");
-    $(".reset").css("display", "inline-block");
-    $(".game").css("display", "inline-block");
-    loop_game = setInterval(render, speed);
+  // Get firebase score and display it
+  const firebaseHighScore = new Firebase(
+    "https://blinding-torch-4399.firebaseio.com/"
+  );
+
+  firebaseHighScore.child("highscore").on("value", fbScore => {
+    localHighScore = fbScore.val();
+    displayScore.innerHTML = localHighScore;
+    userScoreContainer[0].innerHTML = "Score: 0";
   });
 
-  $(".pause").on("click", function(event) {
-    clearInterval(loop_game);
-    $(".start").css("display", "none");
-    $(".resume").css("display", "inline-block");
-    $(".pause").css("display", "none");
-    $(".reset").css("display", "inline-block");
-    $(".playAgain").css("display", "none");
-  });
+  function generateRandomDirection() {
+    const directions = ["down", "left", "up", "right"];
+    const randomDirection = Math.floor(Math.random() * directions.length) - 1;
 
-  $(".playAgain").on("click", function(event) {
-    startGame();
-    $("#canvas").css("visibility", "100");
-    $(".game").css("display", "inline-block");
-    $(".notification").css("display", "none");
-    $(".start").css("display", "none");
-    $(".resume").css("display", "none");
-    $(".pause").css("display", "inline-block");
-    $(".reset").css("display", "inline-block");
-    $(".playAgain").css("display", "none");
-    $(".home").css("display", "none");
-  });
+    return randomDirection < 0 ? directions[0] : directions[randomDirection];
+  }
 
-  $(".home").on('click', function(event) {
-    location.reload(true);
-  });
-
-
-  function snakeMake(){
-    var length = 10;
+  function createSnake() {
+    let randomStartPoint = Math.round(
+      Math.random() * (canvasHeight - snakeWidth) / snakeWidth
+    );
     snake = [];
-    for (var i = length - 1; i >= 0; i--) {
-      snake.push({x:i , y:0});
+    for (var i = 6 - 1; i >= 0; i--) {
+      snake.push({
+        x: randomStartPoint - 1,
+        y: randomStartPoint
+      });
+    }
+  }
+
+  function createFood() {
+    food = {
+      x: Math.round(Math.random() * (canvasWidth - snakeWidth) / snakeWidth),
+      y: Math.round(Math.random() * (canvasHeight - snakeWidth) / snakeWidth)
     };
   }
 
-  function randomGoods() {
-    food = {
-      x: Math.round(Math.random()*(canvasWidth-snakeWidth)/snakeWidth),
-      y: Math.round(Math.random()*(canvasHeight-snakeWidth)/snakeWidth),
-    }
+  function createBonusFood() {
+    bonusFood = {
+      x: Math.floor(Math.random() * (canvasWidth - snakeWidth) / snakeWidth),
+      y: Math.floor(Math.random() * (canvasHeight - snakeWidth) / snakeWidth)
+    };
   }
 
-  var cWsW = Math.ceil(canvasWidth/snakeWidth);
-  var cHsW = Math.ceil(canvasHeight/snakeWidth);
-  function render(){
-    canvasContext.fillStyle = canvasFill;
-    canvasContext.fillRect(0,0,canvasWidth,canvasHeight);
-    canvasContext.strokeStyle = canvasFill;
-    canvasContext.strokeRect(0,0,canvasWidth,canvasHeight);
+  function startTheGame() {
+    score = 0;
+    speed = 70;
+    createSnake();
+    createFood();
+    direction = generateRandomDirection();
 
-    // Make snake go faster
-    clearInterval(loop_game);
-    speed = Math.max(15, 70 - (score * 2));
-    loop_game = setInterval(render, speed);
-
-    // Setting the snake's head
-    var newX = snake[0].x;
-    var newY = snake[0].y;
-    var tail;
-    var color;
-
-    if(direction === "right"){
-        newX ++;
-    } else if(direction === "left"){
-        newX --;
-    } else if(direction === "up"){
-        newY --;
-    } else if(direction === "down"){
-        newY ++;
+    if (typeof loopGame !== "undefined") {
+      clearInterval(loopGame);
     }
-    // GAME OVER CONDITION
-    if(newX === -1 || newX === cWsW || newY === -1 || newY === cHsW || collide(newX,newY,snake)){
-      $(".game").css("display", "none");
-      $(".notification").css("display", "inline-block");
-      $(".start").css("display", "none");
-      $(".resume").css("display", "none");
-      $(".pause").css("display", "none");
-      $(".reset").css("display", "none");
-      $(".playAgain").css("display", "inline-block");
-      $(".home").css("display", "inline-block");
-      $(".score").text("TOTAL SCORE: " + score);
+    loopGame = setInterval(render, speed);
+
+    run.play();
+  }
+
+  function render() {
+    createCanvas();
+    speedUpSnake();
+    moveSnake();
+  }
+
+  function speedUpSnake() {
+    clearInterval(loopGame);
+    speed = Math.max(15, 70 - score * 1.5);
+    loopGame = setInterval(render, speed);
+  }
+
+  function moveSnake() {
+    let newX = snake[0].x,
+      newY = snake[0].y;
+
+    switch (direction) {
+      case "right":
+        newX++;
+        break;
+      case "left":
+        newX--;
+        break;
+      case "up":
+        newY--;
+        break;
+      default:
+        newY++;
+    }
+    checkIfGameOver(newX, newY);
+    eatFood(newX, newY);
+  }
+
+  function checkIfGameOver(newX, newY) {
+    if (
+      newX === -1 ||
+      newX === cWsW ||
+      newY === -1 ||
+      newY === cHsW ||
+      collide(newX, newY, snake)
+    ) {
+      gameContainer[0].style.display = "none";
+      notificationContainer[0].style.display = "inline-block";
+      notificationContainer[0].style.height = `${canvas.height}px`;
+      notificationContainer[0].style.width = `${canvas.width}px`;
+      startButton[0].style.display = "none";
+      resumeButton[0].style.display = "none";
+      pauseButton[0].style.display = "none";
+      resetButton[0].style.display = "none";
+      playAgainButton[0].style.display = "inline-block";
+      homeButton[0].style.display = "inline-block";
+      userScoreContainer[0].innerHTML = `TOTAL SCORE: ${score}`;
       run.pause();
-      die.pause();
+      run.currentTime = 0;
       die.play();
     }
+    updateScore();
+  }
 
-    $(".currentScore").text("Your score: " + score);
-    if(score > highscore) {
-      highscore = parseInt(score);
-      newHS.child('highscore').set(highscore);
+  function updateScore() {
+    userScoreContainer[0].innerHTML = `Score: ${score}`;
+    if (score > localHighScore) {
+      localHighScore = parseInt(score);
+      firebaseHighScore.child("highscore").set(localHighScore);
     }
-    $("#highScore").text(highscore);
+    displayScore.innerHTML = localHighScore;
+  }
 
-    if(newX === food.x && newY === food.y){
-      tail = {x: newX, y: newY};
-      score ++;
+  function eatFood(newX, newY) {
+    if (newX === food.x && newY === food.y) {
+      tail = { x: newX, y: newY };
+      score++;
       eat.play();
-      randomGoods();
+      createFood();
     } else {
       tail = snake.pop();
       tail.x = newX;
       tail.y = newY;
-    };
-    snake.unshift(tail); //move the end of the snake to the head to make it move
-    /* Coloring each array of the snake
-    and adding a white stroke so it looks like a solid snake*/
-    for (var i = 1; i < snake.length; i++) {
-      color1 = snake[0];
-      color2 = snake[i];
-      snakeColor(color2.x, color2.y);
-      snakeHeadColor(color1.x, color1.y);
-
-    };
-    foodColor(food.x, food.y);
+    }
+    snake.unshift(tail);
+    updateSnakeColor();
+    colorFood(food.x, food.y);
   }
 
-  function foodColor(x,y){
-    canvasContext.fillStyle = colorFood;
-    canvasContext.fillRect(x*snakeWidth,y*snakeWidth,snakeWidth,snakeWidth);
-    canvasContext.strokeStyle = colorFood;
-    canvasContext.strokeRect(x*snakeWidth,y*snakeWidth,snakeWidth,snakeWidth);
+  function updateSnakeColor() {
+    for (let i = 1; i < snake.length; i++) {
+      snakeColor(snake[i].x, snake[i].y);
+      colorSnakeHead(snake[0].x, snake[0].y);
+    }
   }
-  function snakeColor(x,y){
+
+  function createCanvas() {
+    canvasContext.fillStyle = canvasFill;
+    canvasContext.fillRect(0, 0, canvasWidth, canvasHeight);
+    canvasContext.strokeStyle = canvasFill;
+    canvasContext.strokeRect(0, 0, canvasWidth, canvasHeight);
+  }
+
+  function colorFood(x, y) {
+    canvasContext.fillStyle = foodColor;
+    canvasContext.fillRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+    canvasContext.strokeStyle = foodColor;
+    canvasContext.strokeRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+  }
+
+  function snakeColor(x, y) {
     canvasContext.fillStyle = bodyColor;
-    canvasContext.fillRect(x*snakeWidth,y*snakeWidth,snakeWidth,snakeWidth);
+    canvasContext.fillRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
     canvasContext.strokeStyle = bodyColor;
-    canvasContext.strokeRect(x*snakeWidth,y*snakeWidth,snakeWidth,snakeWidth);
-  }
-  function snakeHeadColor(x,y){
-    canvasContext.fillStyle = headColor;
-    canvasContext.fillRect(x*snakeWidth,y*snakeWidth,snakeWidth,snakeWidth);
-    canvasContext.strokeStyle = headColor;
-    canvasContext.strokeRect(x*snakeWidth,y*snakeWidth,snakeWidth,snakeWidth);
+    canvasContext.strokeRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
   }
 
-  function collide(x, y, array){
-    for (var i = 0; i < array.length; i++) {
-      if (x === array[i].x && y === array[i].y){
-        console.log("should die");
+  function colorSnakeHead(x, y) {
+    canvasContext.fillStyle = snakeHeadColor;
+    canvasContext.fillRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+    canvasContext.strokeStyle = snakeHeadColor;
+    canvasContext.strokeRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+  }
+
+  function collide(x, y, array) {
+    for (let i = 0; i < array.length; i++) {
+      if (x === array[i].x && y === array[i].y) {
         return true;
       }
     }
     return false;
   }
 
+  // Public functions
+  window.startGame = function(e) {
+    startTheGame();
+    canvas.style.visibility = "visible";
+    startButton[0].style.display = "none";
+    resetButton[0].style.display = "inline-block";
+    pauseButton[0].style.display = "inline-block";
+  };
 
+  window.resetGame = function() {
+    startTheGame();
+    startButton[0].style.display = "none";
+    resumeButton[0].style.display = "none";
+    resetButton[0].style.display = "inline-block";
+    pauseButton[0].style.display = "inline-block";
+    playAgainButton[0].style.display = "none";
+  };
 
-  $(document).keydown(function(event) {
-    var arrow = event.which; // return which key was pressed
-    if(arrow === 37 && direction !== "right"){
+  window.resumeGame = function() {
+    startButton[0].style.display = "none";
+    resumeButton[0].style.display = "none";
+    resetButton[0].style.display = "inline-block";
+    pauseButton[0].style.display = "inline-block";
+    gameContainer[0].style.display = "inline-block";
+    loopGame = setInterval(render, speed);
+  };
+
+  window.pauseGame = function() {
+    clearInterval(loopGame);
+    startButton[0].style.display = "none";
+    resumeButton[0].style.display = "inline-block";
+    pauseButton[0].style.display = "none";
+    resetButton[0].style.display = "inline-block";
+    playAgainButton[0].style.display = "none";
+  };
+
+  window.playAgain = function() {
+    startTheGame();
+    canvas.style.visibility = "visible";
+    gameContainer[0].style.display = "inline-block";
+    notificationContainer[0].style.display = "none";
+    startButton[0].style.display = "none";
+    resumeButton[0].style.display = "none";
+    pauseButton[0].style.display = "inline-block";
+    resetButton[0].style.display = "inline-block";
+    playAgainButton[0].style.display = "none";
+    homeButton[0].style.display = "none";
+  };
+
+  window.homeButton = function() {
+    window.location.reload();
+  };
+
+  window.document.addEventListener("keydown", event => {
+    const arrow = event.which;
+    if (arrow === 37 && direction !== "right") {
       direction = "left";
-    } else if(arrow === 38 && direction !== "down"){
+    } else if (arrow === 38 && direction !== "down") {
       direction = "up";
-    } else if(arrow === 39 && direction !== "left"){
+    } else if (arrow === 39 && direction !== "left") {
       direction = "right";
-    } else if(arrow === 40 && direction !== "up"){
+    } else if (arrow === 40 && direction !== "up") {
       direction = "down";
     }
   });
-});
+
+  window.mobileLeft = function() {
+    direction = "left";
+  }
+  window.mobileRight = function() {
+    direction = "right";
+  }
+  window.mobileUp = function() {
+    direction = "up";
+  }
+  window.mobileDown = function() {
+    direction = "down";
+  }
+})();
