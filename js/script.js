@@ -23,7 +23,9 @@
   // Music Variables
   const run = document.getElementById("run"),
     die = document.getElementById("die"),
-    eat = document.getElementById("eat");
+    eat = document.getElementById("eat"),
+    musicSetting = document.getElementsByClassName("musicSetting");
+  let muted = false;
 
   // Button Variables
   const startButton = document.getElementsByClassName("start"),
@@ -99,6 +101,7 @@
   }
 
   function startTheGame() {
+    musicSetting[0].innerHTML = "On";
     score = 0;
     foodAte = 0;
     speed = 70;
@@ -364,6 +367,7 @@
 
   window.pauseGame = function() {
     clearInterval(loopGame);
+    run.pause();
     startButton[0].style.display = "none";
     resumeButton[0].style.display = "inline-block";
     pauseButton[0].style.display = "none";
@@ -412,5 +416,21 @@
   };
   window.mobileDown = function() {
     direction = "down";
+  };
+
+  window.muteGame = function() {
+    if(muted) {
+      musicSetting[0].innerHTML = "On";
+      muted = false;
+      run.muted = false;
+      die.muted = false;
+      eat.muted = false;
+    } else {
+      musicSetting[0].innerHTML = "Off";
+      muted = true;
+      run.muted = true;
+      die.muted = true;
+      eat.muted = true;
+    }
   };
 })();
