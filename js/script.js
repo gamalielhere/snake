@@ -1,14 +1,13 @@
 (function() {
   // Create canvas
   const canvas = document.getElementById("canvas");
-  if(window.outerWidth > 960) {
+  if (window.outerWidth > 960) {
     canvas.width = Math.round(window.outerWidth / 3);
     canvas.height = Math.round(window.outerWidth / 3);
   } else {
     canvas.width = Math.round(window.outerWidth / 1.15);
     canvas.height = Math.round(window.outerWidth / 1.15);
   }
-
 
   const canvasContext = canvas.getContext("2d"),
     canvasWidth = canvas.width,
@@ -49,6 +48,7 @@
   let snake;
   let score;
   let speed;
+  let foodAte;
 
   gameContainer[0].style.height = `${canvas.height}px`;
   gameContainer[0].style.width = `${canvas.width}px`;
@@ -93,18 +93,18 @@
 
   function createBonusFood() {
     bonusFood = {
-      x: Math.floor(Math.random() * (canvasWidth - snakeWidth) / snakeWidth),
-      y: Math.floor(Math.random() * (canvasHeight - snakeWidth) / snakeWidth)
+      x: Math.round(Math.random() * (canvasWidth - snakeWidth) / snakeWidth),
+      y: Math.round(Math.random() * (canvasHeight - snakeWidth) / snakeWidth)
     };
   }
 
   function startTheGame() {
     score = 0;
+    foodAte = 0;
     speed = 70;
     createSnake();
     createFood();
     direction = generateRandomDirection();
-
     if (typeof loopGame !== "undefined") {
       clearInterval(loopGame);
     }
@@ -144,6 +144,7 @@
     }
     checkIfGameOver(newX, newY);
     eatFood(newX, newY);
+    if (typeof bonusFood !== "undefined") eatBonusFood(newX, newY);
   }
 
   function checkIfGameOver(newX, newY) {
@@ -154,6 +155,7 @@
       newY === cHsW ||
       collide(newX, newY, snake)
     ) {
+      clearInterval(loopGame);
       gameContainer[0].style.display = "none";
       notificationContainer[0].style.display = "inline-block";
       notificationContainer[0].style.height = `${canvas.height}px`;
@@ -185,6 +187,12 @@
     if (newX === food.x && newY === food.y) {
       tail = { x: newX, y: newY };
       score++;
+      foodAte++;
+
+      console.log("Generate!", foodAte, bonusFood);
+      if (foodAte === 7 && typeof bonusFood === "undefined") {
+        createBonusFood();
+      }
       eat.play();
       createFood();
     } else {
@@ -195,6 +203,27 @@
     snake.unshift(tail);
     updateSnakeColor();
     colorFood(food.x, food.y);
+    if (typeof bonusFood !== "undefined") colorBonus(bonusFood.x, bonusFood.y);
+  }
+
+  function eatBonusFood(newX, newY) {
+    if (newX === bonusFood.x && newY === bonusFood.y) {
+      tail = { x: newX, y: newY };
+
+      score += 5;
+      eat.play();
+
+      if (typeof bonusFood !== "undefined") {
+        removeBonus(bonusFood.x, bonusFood.y);
+      }
+    }
+
+    foodAte = 0;
+    if (typeof bonusFood !== undefined) {
+      setTimeout(() => {
+        removeBonus(bonusFood.x, bonusFood.y);
+      }, 2500);
+    }
   }
 
   function updateSnakeColor() {
@@ -220,6 +249,41 @@
       snakeWidth
     );
     canvasContext.strokeStyle = foodColor;
+    canvasContext.strokeRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+  }
+
+  function colorBonus(x, y) {
+    canvasContext.fillStyle = "red";
+    canvasContext.fillRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+    canvasContext.strokeStyle = foodColor;
+    canvasContext.strokeRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+  }
+
+  function removeBonus(x, y) {
+    bonusFood = undefined;
+    canvasContext.fillStyle = "black";
+    canvasContext.fillRect(
+      x * snakeWidth,
+      y * snakeWidth,
+      snakeWidth,
+      snakeWidth
+    );
+    canvasContext.strokeStyle = "black";
     canvasContext.strokeRect(
       x * snakeWidth,
       y * snakeWidth,
@@ -339,14 +403,14 @@
 
   window.mobileLeft = function() {
     direction = "left";
-  }
+  };
   window.mobileRight = function() {
     direction = "right";
-  }
+  };
   window.mobileUp = function() {
     direction = "up";
-  }
+  };
   window.mobileDown = function() {
     direction = "down";
-  }
+  };
 })();
