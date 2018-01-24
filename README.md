@@ -41,6 +41,6 @@ My design approach is basically reviving a retro game. I used "Press Start 2P" a
 All of my user stories can be found in my [Trelloboards](https://trello.com/b/TTtZgl3z)
 
 # CODE
-[The code can be found here](https://github.com/gamalielhere/projects/tree/master/project_1/snake)
+[The code can be found here](https://github.com/gamalielhere/snake)
 
 [And the hosted game site can be found here](http://gamalielhere.github.io/snake/)
