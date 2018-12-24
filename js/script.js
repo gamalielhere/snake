@@ -1,14 +1,8 @@
-(function() {
+(function () {
   // Create canvas
   const canvas = document.getElementById("canvas");
-  if (window.outerWidth > 960) {
-    canvas.width = Math.round(window.outerWidth / 3);
-    canvas.height = Math.round(window.outerWidth / 3);
-  } else {
-    canvas.width = Math.round(window.outerWidth / 1.15);
-    canvas.height = Math.round(window.outerWidth / 1.15);
-  }
-
+  canvas.width = Math.round(window.outerWidth - 30);
+  canvas.height = Math.round(window.outerWidth - 30);
   const canvasContext = canvas.getContext("2d"),
     canvasWidth = canvas.width,
     canvasHeight = canvas.height;
@@ -21,10 +15,7 @@
     canvasFill = "black";
 
   // Music Variables
-  const run = document.getElementById("run"),
-    die = document.getElementById("die"),
-    eat = document.getElementById("eat"),
-    musicSetting = document.getElementsByClassName("musicSetting");
+  const run = document.getElementById("run");
   let muted = false;
 
   // Button Variables
@@ -170,9 +161,6 @@
       playAgainButton[0].style.display = "inline-block";
       homeButton[0].style.display = "inline-block";
       userScoreContainer[0].innerHTML = `TOTAL SCORE: ${score}`;
-      run.pause();
-      run.currentTime = 0;
-      die.play();
     }
     updateScore();
   }
@@ -339,7 +327,7 @@
   }
 
   // Public functions
-  window.startGame = function(e) {
+  window.startGame = function (e) {
     startTheGame();
     canvas.style.visibility = "visible";
     startButton[0].style.display = "none";
@@ -347,7 +335,7 @@
     pauseButton[0].style.display = "inline-block";
   };
 
-  window.resetGame = function() {
+  window.resetGame = function () {
     startTheGame();
     startButton[0].style.display = "none";
     resumeButton[0].style.display = "none";
@@ -356,7 +344,7 @@
     playAgainButton[0].style.display = "none";
   };
 
-  window.resumeGame = function() {
+  window.resumeGame = function () {
     startButton[0].style.display = "none";
     resumeButton[0].style.display = "none";
     resetButton[0].style.display = "inline-block";
@@ -365,7 +353,7 @@
     loopGame = setInterval(render, speed);
   };
 
-  window.pauseGame = function() {
+  window.pauseGame = function () {
     clearInterval(loopGame);
     run.pause();
     startButton[0].style.display = "none";
@@ -375,7 +363,7 @@
     playAgainButton[0].style.display = "none";
   };
 
-  window.playAgain = function() {
+  window.playAgain = function () {
     startTheGame();
     canvas.style.visibility = "visible";
     gameContainer[0].style.display = "inline-block";
@@ -388,7 +376,7 @@
     homeButton[0].style.display = "none";
   };
 
-  window.homeButton = function() {
+  window.homeButton = function () {
     window.location.reload();
   };
 
@@ -405,32 +393,16 @@
     }
   });
 
-  window.mobileLeft = function() {
+  window.mobileLeft = function () {
     direction = "left";
   };
-  window.mobileRight = function() {
+  window.mobileRight = function () {
     direction = "right";
   };
-  window.mobileUp = function() {
+  window.mobileUp = function () {
     direction = "up";
   };
-  window.mobileDown = function() {
+  window.mobileDown = function () {
     direction = "down";
-  };
-
-  window.muteGame = function() {
-    if(muted) {
-      musicSetting[0].innerHTML = "On";
-      muted = false;
-      run.muted = false;
-      die.muted = false;
-      eat.muted = false;
-    } else {
-      musicSetting[0].innerHTML = "Off";
-      muted = true;
-      run.muted = true;
-      die.muted = true;
-      eat.muted = true;
-    }
   };
 })();
