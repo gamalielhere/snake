@@ -39,7 +39,11 @@
   let speed;
   let foodAte;
   let gameStarted = "no";
-  let stats = {};
+  let stats = {
+    foodAte: 0,
+    bonusFood: 0,
+    totalScore: 0
+  };
 
   gameContainer[0].style.height = `${canvas.height}px`;
   gameContainer[0].style.width = `${canvas.width}px`;
