@@ -1,5 +1,6 @@
 /*BODY STUFFS*/
 body {
+  background-color: #0e0e0e;
   font-family: "Press Start 2P", Arial, Serif;
   height: 100%;
   margin: 0 !important;
@@ -91,88 +92,27 @@ body {
   color: #f94343;
 }
 
-/* body > h1 {
-  margin-top: -5px;
-  margin-bottom: -3px;
-} */
+@media screen and (max-width: 600px) {
+  .initial-text {
+    left: 15%;
+    right: 15%;
+  }
 
-/*BOARD*/
-.game {
-  background-color: #0e0e0e;
-  display: inline-block;
-  margin: 0 auto;
-}
-
-#canvas {
-  visibility: hidden;
-}
-
-.notification {
-  display: none;
-  background-color: #0e0e0e;
-  color: red;
-}
-
-/*BUTTONS*/
-/* button {
-  background-color: grey;
-  border: 1px solid #0e0e0e;
-  font-family: "Press Start 2P", Arial, Serif;
-  margin: 5px;
-  height: 45px;
-  width: 300px;
-}
-
-.content {
-  margin-top: 64px;
-} */
-
-.resume {
-  display: none;
-}
-
-.reset {
-  display: none;
-}
-
-.playAgain {
-  display: none;
-}
-
-.settings {
-  display: inline-block;
-}
-
-.home {
-  display: none;
-}
-
-.pause {
-  display: none;
-}
-
-.mobileButton {
-  display: none;
-}
-
-.mobileButtonCenter {
-  text-align: center;
-}
-
-.mobileButtonCenter button {
-  width: 80px;
-}
-
-.left--right button {
-  margin: 0 40px;
-}
-
-@media screen and (max-width: 960px) {
-  .mobileButton {
+  .mobile {
     display: block;
   }
 
-  .content {
-    margin-top: 25px;
+  .desktop {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  .mobile {
+    display: none;
+  }
+
+  .desktop {
+    display: block;
   }
 }

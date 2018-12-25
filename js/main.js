@@ -1,4 +1,4 @@
-(function() {
+(function () {
   // Create canvas
   const canvas = document.getElementById("canvas");
   canvas.width = Math.round(window.innerWidth);
@@ -26,6 +26,7 @@
     headerContainer = document.getElementById("header"),
     controlsInfo = document.getElementById("controlsInfo"),
     currentScore = document.getElementById("currentScore"),
+    scoresInfo = document.getElementById("scoresInfo"),
     infoContainer = document.getElementById("infoContainer");
   const cWsW = Math.ceil(canvasWidth / snakeWidth),
     cHsW = Math.ceil(canvasHeight / snakeWidth);
@@ -55,7 +56,7 @@
       (Math.random() * (canvasHeight - snakeWidth)) / snakeWidth
     );
     snake = [];
-    for (var i = 6 - 1; i >= 0; i--) {
+    for (const i = 6 - 1; i >= 0; i--) {
       snake.push({
         x: randomStartPoint - 1,
         y: randomStartPoint
@@ -298,6 +299,7 @@
 
   function startGameOnEvent() {
     gameStarted = "playing";
+    resetButton.innerHTML = "RESET";
     headerContainer.style.display = "flex";
     infoContainer.style.display = "none";
     startTheGame();
@@ -318,22 +320,22 @@
 
   function displayDeathScreen() {
     const temp = `
-      <div>Food Ate: ${stats["foodAte"]}</div>
-      <div>Bonus Food Ate: ${stats["bonusFood"]}</div>
-      <div>Total Score: ${stats["totalScore"]}</div>
+      <div style="margin-top: 20px;">Food Ate: ${stats["foodAte"] ? stats["foodAte"] : 0}</div>
+      <div>Bonus Food Ate: ${stats["bonusFood"] ? stats["bonusFood"] : 0}</div>
+      <div>Total Score: ${stats["totalScore"] ? stats["totalScore"] : 0}</div>
     `;
     gameStarted = "no";
     resetButton.innerHTML = "PLAY AGAIN";
     headerContainer.style.display = "none";
-    resetButton.style.display = "none";
+    resetButton.style.display = "block";
     continueButton.style.display = "none";
     headerContainer.style.display = "none";
     startButton.style.display = "none";
     controlsButton.style.display = "none";
     infoContainer.style.display = "block";
+    scoresInfo.style.display = "block";
+    scoresInfo.innerHTML = temp;
   }
-
-  // Public functions
 
   function resumeGame() {
     gameStarted = "playing";
