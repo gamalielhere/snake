@@ -1,8 +1,8 @@
-(function () {
+(function() {
   // Create canvas
   const canvas = document.getElementById("canvas");
-  canvas.width = Math.round(window.outerWidth - 30);
-  canvas.height = Math.round(window.outerWidth - 30);
+  canvas.width = Math.round(window.innerWidth);
+  canvas.height = Math.round(window.innerHeight - 80);
   const canvasContext = canvas.getContext("2d"),
     canvasWidth = canvas.width,
     canvasHeight = canvas.height;
@@ -11,51 +11,37 @@
   const snakeWidth = 15,
     snakeHeadColor = "green",
     foodColor = "yellow",
-    bodyColor = "white",
-    canvasFill = "black";
-
-  // Music Variables
-  const run = document.getElementById("run");
-  let muted = false;
+    bodyColor = "#fafafa",
+    canvasFill = "#0e0e0e";
 
   // Button Variables
-  const startButton = document.getElementsByClassName("start"),
-    resetButton = document.getElementsByClassName("reset"),
-    resumeButton = document.getElementsByClassName("resume"),
-    pauseButton = document.getElementsByClassName("pause"),
-    homeButton = document.getElementsByClassName("home"),
-    playAgainButton = document.getElementsByClassName("playAgain");
+  const startButton = document.getElementById("start"),
+    controlsButton = document.getElementById("controls"),
+    resetButton = document.getElementById("reset"),
+    continueButton = document.getElementById("continue"),
+    backButton = document.getElementById("back");
 
   // Various variables
-  const displayScore = document.getElementById("highScore"),
-    gameContainer = document.getElementsByClassName("game"),
-    notificationContainer = document.getElementsByClassName("notification"),
-    userScoreContainer = document.getElementsByClassName("currentScore");
+  const gameContainer = document.getElementsByClassName("game"),
+    headerContainer = document.getElementById("header"),
+    controlsInfo = document.getElementById("controlsInfo"),
+    currentScore = document.getElementById("currentScore"),
+    infoContainer = document.getElementById("infoContainer");
   const cWsW = Math.ceil(canvasWidth / snakeWidth),
     cHsW = Math.ceil(canvasHeight / snakeWidth);
   let direction;
   let food;
   let bonusFood;
-  let localHighScore;
   let loopGame;
   let snake;
   let score;
   let speed;
   let foodAte;
+  let gameStarted = "no";
+  let stats = {};
 
   gameContainer[0].style.height = `${canvas.height}px`;
   gameContainer[0].style.width = `${canvas.width}px`;
-
-  // Get firebase score and display it
-  const firebaseHighScore = new Firebase(
-    "https://blinding-torch-4399.firebaseio.com/"
-  );
-
-  firebaseHighScore.child("highscore").on("value", fbScore => {
-    localHighScore = fbScore.val();
-    displayScore.innerHTML = localHighScore;
-    userScoreContainer[0].innerHTML = "Score: 0";
-  });
 
   function generateRandomDirection() {
     const directions = ["down", "left", "up", "right"];
@@ -66,7 +52,7 @@
 
   function createSnake() {
     let randomStartPoint = Math.round(
-      Math.random() * (canvasHeight - snakeWidth) / snakeWidth
+      (Math.random() * (canvasHeight - snakeWidth)) / snakeWidth
     );
     snake = [];
     for (var i = 6 - 1; i >= 0; i--) {
@@ -79,20 +65,20 @@
 
   function createFood() {
     food = {
-      x: Math.round(Math.random() * (canvasWidth - snakeWidth) / snakeWidth),
-      y: Math.round(Math.random() * (canvasHeight - snakeWidth) / snakeWidth)
+      x: Math.round((Math.random() * (canvasWidth - snakeWidth)) / snakeWidth),
+      y: Math.round((Math.random() * (canvasHeight - snakeWidth)) / snakeWidth)
     };
   }
 
   function createBonusFood() {
     bonusFood = {
-      x: Math.round(Math.random() * (canvasWidth - snakeWidth) / snakeWidth),
-      y: Math.round(Math.random() * (canvasHeight - snakeWidth) / snakeWidth)
+      x: Math.round((Math.random() * (canvasWidth - snakeWidth)) / snakeWidth),
+      y: Math.round((Math.random() * (canvasHeight - snakeWidth)) / snakeWidth)
     };
   }
 
   function startTheGame() {
-    musicSetting[0].innerHTML = "On";
+    gameStarted = "playing";
     score = 0;
     foodAte = 0;
     speed = 70;
@@ -103,8 +89,6 @@
       clearInterval(loopGame);
     }
     loopGame = setInterval(render, speed);
-
-    run.play();
   }
 
   function render() {
@@ -149,29 +133,10 @@
       newY === cHsW ||
       collide(newX, newY, snake)
     ) {
+      stats["totalScore"] = score;
+      displayDeathScreen();
       clearInterval(loopGame);
-      gameContainer[0].style.display = "none";
-      notificationContainer[0].style.display = "inline-block";
-      notificationContainer[0].style.height = `${canvas.height}px`;
-      notificationContainer[0].style.width = `${canvas.width}px`;
-      startButton[0].style.display = "none";
-      resumeButton[0].style.display = "none";
-      pauseButton[0].style.display = "none";
-      resetButton[0].style.display = "none";
-      playAgainButton[0].style.display = "inline-block";
-      homeButton[0].style.display = "inline-block";
-      userScoreContainer[0].innerHTML = `TOTAL SCORE: ${score}`;
     }
-    updateScore();
-  }
-
-  function updateScore() {
-    userScoreContainer[0].innerHTML = `Score: ${score}`;
-    if (score > localHighScore) {
-      localHighScore = parseInt(score);
-      firebaseHighScore.child("highscore").set(localHighScore);
-    }
-    displayScore.innerHTML = localHighScore;
   }
 
   function eatFood(newX, newY) {
@@ -180,11 +145,11 @@
       score++;
       foodAte++;
 
-      console.log("Generate!", foodAte, bonusFood);
+      stats["foodAte"] += 1;
+
       if (foodAte === 7 && typeof bonusFood === "undefined") {
         createBonusFood();
       }
-      eat.play();
       createFood();
     } else {
       tail = snake.pop();
@@ -202,7 +167,7 @@
       tail = { x: newX, y: newY };
 
       score += 5;
-      eat.play();
+      stats["bonusFood"] += 1;
 
       if (typeof bonusFood !== "undefined") {
         removeBonus(bonusFood.x, bonusFood.y);
@@ -213,7 +178,7 @@
     if (typeof bonusFood !== undefined) {
       setTimeout(() => {
         removeBonus(bonusFood.x, bonusFood.y);
-      }, 2500);
+      }, 5000);
     }
   }
 
@@ -267,14 +232,14 @@
 
   function removeBonus(x, y) {
     bonusFood = undefined;
-    canvasContext.fillStyle = "black";
+    canvasContext.fillStyle = "#0e0e0e";
     canvasContext.fillRect(
       x * snakeWidth,
       y * snakeWidth,
       snakeWidth,
       snakeWidth
     );
-    canvasContext.strokeStyle = "black";
+    canvasContext.strokeStyle = "#0e0e0e";
     canvasContext.strokeRect(
       x * snakeWidth,
       y * snakeWidth,
@@ -323,62 +288,63 @@
         return true;
       }
     }
+    updateScore();
     return false;
   }
 
-  // Public functions
-  window.startGame = function (e) {
+  function updateScore() {
+    currentScore.innerHTML = score;
+  }
+
+  function startGameOnEvent() {
+    gameStarted = "playing";
+    headerContainer.style.display = "flex";
+    infoContainer.style.display = "none";
     startTheGame();
     canvas.style.visibility = "visible";
-    startButton[0].style.display = "none";
-    resetButton[0].style.display = "inline-block";
-    pauseButton[0].style.display = "inline-block";
-  };
+  }
 
-  window.resetGame = function () {
-    startTheGame();
-    startButton[0].style.display = "none";
-    resumeButton[0].style.display = "none";
-    resetButton[0].style.display = "inline-block";
-    pauseButton[0].style.display = "inline-block";
-    playAgainButton[0].style.display = "none";
-  };
-
-  window.resumeGame = function () {
-    startButton[0].style.display = "none";
-    resumeButton[0].style.display = "none";
-    resetButton[0].style.display = "inline-block";
-    pauseButton[0].style.display = "inline-block";
-    gameContainer[0].style.display = "inline-block";
-    loopGame = setInterval(render, speed);
-  };
-
-  window.pauseGame = function () {
+  function pauseGame() {
+    gameStarted = "paused";
     clearInterval(loopGame);
-    run.pause();
-    startButton[0].style.display = "none";
-    resumeButton[0].style.display = "inline-block";
-    pauseButton[0].style.display = "none";
-    resetButton[0].style.display = "inline-block";
-    playAgainButton[0].style.display = "none";
-  };
+    headerContainer.style.display = "none";
+    startButton.style.display = "none";
+    controlsButton.style.display = "none";
+    resetButton.style.display = "block";
+    continueButton.style.display = "block";
+    headerContainer.style.display = "none";
+    infoContainer.style.display = "block";
+  }
 
-  window.playAgain = function () {
-    startTheGame();
-    canvas.style.visibility = "visible";
-    gameContainer[0].style.display = "inline-block";
-    notificationContainer[0].style.display = "none";
-    startButton[0].style.display = "none";
-    resumeButton[0].style.display = "none";
-    pauseButton[0].style.display = "inline-block";
-    resetButton[0].style.display = "inline-block";
-    playAgainButton[0].style.display = "none";
-    homeButton[0].style.display = "none";
-  };
+  function displayDeathScreen() {
+    const temp = `
+      <div>Food Ate: ${stats["foodAte"]}</div>
+      <div>Bonus Food Ate: ${stats["bonusFood"]}</div>
+      <div>Total Score: ${stats["totalScore"]}</div>
+    `;
+    gameStarted = "no";
+    resetButton.innerHTML = "PLAY AGAIN";
+    headerContainer.style.display = "none";
+    resetButton.style.display = "none";
+    continueButton.style.display = "none";
+    headerContainer.style.display = "none";
+    startButton.style.display = "none";
+    controlsButton.style.display = "none";
+    infoContainer.style.display = "block";
+  }
 
-  window.homeButton = function () {
-    window.location.reload();
-  };
+  // Public functions
+
+  function resumeGame() {
+    gameStarted = "playing";
+    loopGame = setInterval(render, speed);
+    headerContainer.style.display = "flex";
+    infoContainer.style.display = "none";
+    startButton.style.display = "none";
+    controlsButton.style.display = "none";
+    resetButton.style.display = "none";
+    continueButton.style.display = "none";
+  }
 
   window.document.addEventListener("keydown", event => {
     const arrow = event.which;
@@ -390,19 +356,48 @@
       direction = "right";
     } else if (arrow === 40 && direction !== "up") {
       direction = "down";
+    } else if (arrow === 32) {
+      switch (gameStarted) {
+        case "no":
+          startGameOnEvent();
+          break;
+        case "paused":
+          resumeGame();
+          break;
+        default:
+          pauseGame();
+      }
     }
   });
 
-  window.mobileLeft = function () {
-    direction = "left";
-  };
-  window.mobileRight = function () {
-    direction = "right";
-  };
-  window.mobileUp = function () {
-    direction = "up";
-  };
-  window.mobileDown = function () {
-    direction = "down";
-  };
+  resetButton.addEventListener("click", e => {
+    e.stopPropagation();
+    startGameOnEvent();
+  });
+
+  controlsButton.addEventListener("click", e => {
+    e.stopPropagation();
+    startButton.style.display = "none";
+    e.target.style.display = "none";
+    controlsInfo.style.display = "block";
+    backButton.style.display = "block";
+  });
+
+  backButton.addEventListener("click", e => {
+    e.stopPropagation();
+    startButton.style.display = "block";
+    controlsButton.style.display = "block";
+    controlsInfo.style.display = "none";
+    e.target.style.display = "none";
+  });
+
+  startButton.addEventListener("click", e => {
+    e.stopPropagation();
+    startGameOnEvent();
+  });
+
+  continueButton.addEventListener("click", e => {
+    e.stopPropagation();
+    resumeGame();
+  });
 })();
