@@ -56,7 +56,7 @@
       (Math.random() * (canvasHeight - snakeWidth)) / snakeWidth
     );
     snake = [];
-    for (const i = 6 - 1; i >= 0; i--) {
+    for (let i = 6 - 1; i >= 0; i--) {
       snake.push({
         x: randomStartPoint - 1,
         y: randomStartPoint
